@@ -8,15 +8,21 @@ const noteCategory = document.querySelector("#note-category");
 const errorMessage = document.querySelector("#error-message");
 const notesList = document.querySelector("#notes-list");
 const noteCount = document.querySelector("#note-count");
+const searchInput = document.querySelector("#search-input");
 
 const savedNotes = localStorage.getItem("notes");
 if (savedNotes) notes = JSON.parse(savedNotes);
 
 const render = () => {
-  // Clear stale cards first so the list always matches the current notes array.
+  // Clear stale cards first so the list always matches the current notes and search.
   notesList.replaceChildren();
 
-  notes.forEach((note) => {
+  const searchTerm = searchInput.value.trim().toLowerCase();
+  const filteredNotes = searchTerm
+    ? notes.filter((note) => note.text.toLowerCase().includes(searchTerm))
+    : notes;
+
+  filteredNotes.forEach((note) => {
     const noteItem = document.createElement("li");
     noteItem.classList.add("note", `category-${note.category}`);
 
@@ -43,6 +49,12 @@ const render = () => {
     noteItem.appendChild(deleteButton);
     notesList.appendChild(noteItem);
   });
+
+  if (searchTerm && filteredNotes.length === 0) {
+    const noResults = document.createElement("li");
+    noResults.textContent = "No notes match your search.";
+    notesList.appendChild(noResults);
+  }
 
   if (notes.length === 0) {
     noteCount.textContent = "You have no notes yet.";
@@ -91,6 +103,10 @@ const deleteNote = (noteId) => {
 
   saveNotesToLocalStorage();
 };
+
+searchInput.addEventListener("input", () => {
+  render();
+});
 
 // Show the current notes and count immediately when the page loads.
 render();
