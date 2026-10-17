@@ -1,10 +1,13 @@
 // Each note is { id, text, category, createdAt }, with createdAt kept as readable text.
+// `let` because deleteNote swaps in a filtered copy of the array.
 let notes = [];
 
 const noteForm = document.querySelector("#note-form");
 const noteInput = document.querySelector("#note-input");
 const noteCategory = document.querySelector("#note-category");
+const errorMessage = document.querySelector("#error-message");
 const notesList = document.querySelector("#notes-list");
+const noteCount = document.querySelector("#note-count");
 
 const render = () => {
   // Clear stale cards first so the list always matches the current notes array.
@@ -27,6 +30,9 @@ const render = () => {
 
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click", () => {
+      deleteNote(note.id);
+    });
 
     noteItem.appendChild(noteText);
     noteItem.appendChild(noteCategoryLabel);
@@ -34,12 +40,28 @@ const render = () => {
     noteItem.appendChild(deleteButton);
     notesList.appendChild(noteItem);
   });
+
+  if (notes.length === 0) {
+    noteCount.textContent = "You have no notes yet.";
+  } else if (notes.length === 1) {
+    noteCount.textContent = "You have 1 note.";
+  } else {
+    noteCount.textContent = `You have ${notes.length} notes.`;
+  }
 };
 
 noteForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
+  // Ignore surrounding whitespace so whitespace-only input counts as empty.
   const noteText = noteInput.value.trim();
+  if (noteText === "") {
+    errorMessage.textContent = "Please type a note first.";
+    return;
+  } else if (noteText.length > 200) {
+    errorMessage.textContent = "Notes must be 200 characters or fewer.";
+    return;
+  }
 
   const note = {
     id: Date.now(),
@@ -51,7 +73,13 @@ noteForm.addEventListener("submit", (event) => {
   notes.push(note);
   render();
   noteInput.value = "";
+  errorMessage.textContent = "";
 });
 
-// Show the current notes immediately when the page loads.
+const deleteNote = (noteId) => {
+  notes = notes.filter((note) => note.id !== noteId);
+  render();
+};
+
+// Show the current notes and count immediately when the page loads.
 render();
