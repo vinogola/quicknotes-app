@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuickNotes</title>
+    <title>QuickNotes – Simple Note Taking</title>
     <link rel="stylesheet" href="./style.css" />
     <script src="./script.js" defer></script>
   </head>
@@ -18,15 +18,19 @@
         <h2>Add a note</h2>
 
         <form id="note-form">
-          <label for="note-input">Note:</label>
-          <input type="text" id="note-input" />
+          <div class="field grow">
+            <label for="note-input">Note:</label>
+            <input type="text" id="note-input" />
+          </div>
 
-          <label for="note-category">Category:</label>
-          <select id="note-category">
-            <option value="personal">Personal</option>
-            <option value="work">Work</option>
-            <option value="study">Study</option>
-          </select>
+          <div class="field">
+            <label for="note-category">Category:</label>
+            <select id="note-category">
+              <option value="personal">Personal</option>
+              <option value="work">Work</option>
+              <option value="study">Study</option>
+            </select>
+          </div>
 
           <button type="submit">Add note</button>
         </form>
