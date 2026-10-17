@@ -1,5 +1,5 @@
 // Each note is { id, text, category, createdAt }, with createdAt kept as readable text.
-// `let` because deleteNote swaps in a filtered copy of the array.
+// `let` because loading saved notes and deleteNote both reassign the array.
 let notes = [];
 
 const noteForm = document.querySelector("#note-form");
@@ -8,6 +8,9 @@ const noteCategory = document.querySelector("#note-category");
 const errorMessage = document.querySelector("#error-message");
 const notesList = document.querySelector("#notes-list");
 const noteCount = document.querySelector("#note-count");
+
+const savedNotes = localStorage.getItem("notes");
+if (savedNotes) notes = JSON.parse(savedNotes);
 
 const render = () => {
   // Clear stale cards first so the list always matches the current notes array.
@@ -50,6 +53,10 @@ const render = () => {
   }
 };
 
+const saveNotesToLocalStorage = () => {
+  localStorage.setItem("notes", JSON.stringify(notes));
+};
+
 noteForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -74,11 +81,15 @@ noteForm.addEventListener("submit", (event) => {
   render();
   noteInput.value = "";
   errorMessage.textContent = "";
+
+  saveNotesToLocalStorage();
 });
 
 const deleteNote = (noteId) => {
   notes = notes.filter((note) => note.id !== noteId);
   render();
+
+  saveNotesToLocalStorage();
 };
 
 // Show the current notes and count immediately when the page loads.
